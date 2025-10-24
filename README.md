@@ -37,6 +37,28 @@ A production-ready AI command center integrating Claude API for TVRF system mana
 
 - **🔒 Production-Ready**: Security headers, rate limiting, input validation, error handling
 
+## 🚀 One-Click Railway Deployment
+
+Deploy your TVRF Command Center to Railway in minutes:
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/buge4/tvrf-command-center)
+
+### Quick Deploy Steps
+
+1. **Click the button above** or go to [railway.app](https://railway.app)
+2. **Connect your GitHub** and select this repository
+3. **Add Environment Variables**:
+   ```
+   CLAUDE_API_KEY=sk-ant-your-claude-key-here
+   # OR
+   OPENAI_API_KEY=sk-proj-your-openai-key-here
+   ```
+4. **Deploy!** Railway will automatically build and deploy
+
+**Result**: Your app will be live at `https://your-project-name.railway.app`
+
+See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) for detailed instructions and troubleshooting.
+
 ## System Architecture
 
 ```
