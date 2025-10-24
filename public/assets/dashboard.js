@@ -85,10 +85,18 @@ class DashboardApp {
             const statusDot = document.querySelector('.status-dot');
             
             if (data.status === 'ok' || data.status === 'healthy') {
-                statusEl.textContent = 'Connected';
-                statusDot.style.background = '#10b981';
-                this.isOnline = true;
-                this.loadArmyData(); // Load live data
+                // Check if API keys are configured for live mode
+                if (data.hasApiKeys) {
+                    statusEl.textContent = 'Live Mode';
+                    statusDot.style.background = '#10b981';
+                    this.isOnline = true; // Live mode with API keys
+                    this.loadArmyData(); // Load live data
+                } else {
+                    statusEl.textContent = 'Ready (Add API Keys)';
+                    statusDot.style.background = '#3b82f6';
+                    this.isOnline = false; // Demo mode - no API keys yet
+                    this.loadDemoData();
+                }
             } else {
                 throw new Error('Server responded with unhealthy status');
             }
@@ -100,6 +108,7 @@ class DashboardApp {
             this.isOnline = false;
             statusEl.textContent = 'Demo Mode';
             statusDot.style.background = '#f59e0b';
+            this.loadDemoData();
             
             // Load mock Army data for demonstration
             this.loadMockArmyData();
