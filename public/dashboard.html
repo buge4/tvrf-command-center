@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TVRF Command Center</title>
+    <link rel="stylesheet" href="/assets/dashboard.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>TVRF Command</h2>
+                <p class="subtitle">AI Commander</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-view="chat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Chat</span>
+                </button>
+                <button class="nav-item" data-view="projects">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Projects</span>
+                </button>
+                <button class="nav-item" data-view="history">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>History</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="systemStatus">Connected</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div id="chatView" class="view active">
+                <div class="view-header">
+                    <h1>AI Chat Commander</h1>
+                    <div class="session-info">
+                        <span>Session: <span id="sessionId">New</span></span>
+                        <button id="newSessionBtn" class="btn-secondary">New Session</button>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div id="chatMessages" class="chat-messages"></div>
+                    <div class="chat-input-container">
+                        <textarea id="chatInput" placeholder="Enter your command..." rows="3"></textarea>
+                        <button id="sendBtn" class="btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="projectsView" class="view">
+                <div class="view-header">
+                    <h1>Projects</h1>
+                    <button id="newProjectBtn" class="btn-primary">New Project</button>
+                </div>
+
+                <div id="projectsList" class="projects-grid"></div>
+
+                <div id="newProjectModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Create New Project</h2>
+                        <input type="text" id="projectName" placeholder="Project Name" class="input">
+                        <textarea id="projectDescription" placeholder="Project Description" rows="4" class="input"></textarea>
+                        <div class="modal-actions">
+                            <button id="cancelProjectBtn" class="btn-secondary">Cancel</button>
+                            <button id="createProjectBtn" class="btn-primary">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="historyView" class="view">
+                <div class="view-header">
+                    <h1>Conversation History</h1>
+                    <button id="refreshHistoryBtn" class="btn-secondary">Refresh</button>
+                </div>
+
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/dashboard.js"></script>
+</body>
+</html>

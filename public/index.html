@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVRF AI Command Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status.online {
+            border-left: 4px solid #10b981;
+        }
+
+        .status.offline {
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TVRF AI Command Center</h1>
+        <p class="subtitle">General AI Commander for TVRF System Management</p>
+
+        <div class="features">
+            <div class="feature">
+                <h3>Claude AI Integration</h3>
+                <p>Powered by Claude Opus for intelligent command execution</p>
+            </div>
+            <div class="feature">
+                <h3>TVRF System</h3>
+                <p>5-level random extraction with O(1) lookup performance</p>
+            </div>
+            <div class="feature">
+                <h3>Project Management</h3>
+                <p>Track and coordinate development tasks efficiently</p>
+            </div>
+            <div class="feature">
+                <h3>Conversation Memory</h3>
+                <p>Persistent conversation history and context awareness</p>
+            </div>
+        </div>
+
+        <a href="/dashboard" class="cta-button">Enter Command Center</a>
+
+        <div id="status" class="status">
+            <span id="statusText">Checking system status...</span>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('status');
+                const statusTextEl = document.getElementById('statusText');
+                
+                if (data.status === 'healthy') {
+                    statusEl.className = 'status online';
+                    statusTextEl.textContent = `System Online - ${data.service}`;
+                } else {
+                    statusEl.className = 'status offline';
+                    statusTextEl.textContent = 'System Offline';
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('status');
+                const statusTextEl = document.getElementById('statusText');
+                statusEl.className = 'status offline';
+                statusTextEl.textContent = 'Unable to connect to server';
+            }
+        }
+
+        checkStatus();
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>
