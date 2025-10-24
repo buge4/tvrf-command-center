@@ -6,8 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "rm -rf node_modules package-lock.json && npm install && echo 'Build completed'",
-    "postinstall": "npm cache clean --force"
+    "build": "npm cache clean --force && rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock .npm && npm install --force --no-audit --no-fund && echo '✅ Build completed successfully at $(date)' && echo 'Dependencies installed: express cors'",
+    "clean": "rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock .npm",
+    "rebuild": "npm run clean && npm install --force"
   },
   "dependencies": {
     "express": "^4.18.2",
