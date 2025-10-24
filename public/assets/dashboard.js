@@ -146,43 +146,110 @@ class DashboardApp {
         this.showTypingIndicator();
 
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: message,
-                    sessionId: this.sessionId,
-                    useHistory: true
-                })
-            });
+            if (this.isOnline) {
+                // Live mode - make API call
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: this.sessionId,
+                        useHistory: true
+                    })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            this.removeTypingIndicator();
+                this.removeTypingIndicator();
 
-            if (data.success) {
-                // Update session ID
-                if (!this.sessionId && data.sessionId) {
-                    this.sessionId = data.sessionId;
-                    localStorage.setItem('tvrf_session_id', this.sessionId);
-                    this.updateSessionDisplay();
+                if (data.success) {
+                    // Update session ID
+                    if (!this.sessionId && data.sessionId) {
+                        this.sessionId = data.sessionId;
+                        localStorage.setItem('tvrf_session_id', this.sessionId);
+                        this.updateSessionDisplay();
+                    }
+
+                    // Display assistant response
+                    this.addMessageToChat('assistant', data.message);
+                } else {
+                    this.addMessageToChat('assistant', 'Error: ' + data.error);
                 }
-
-                // Display assistant response
-                this.addMessageToChat('assistant', data.message);
             } else {
-                this.addMessageToChat('assistant', 'Error: ' + data.error);
+                // Demo mode - provide mock responses
+                setTimeout(() => {
+                    this.removeTypingIndicator();
+                    const demoResponse = this.generateDemoResponse(message);
+                    this.addMessageToChat('assistant', demoResponse);
+                }, 1500 + Math.random() * 2000); // Random delay to simulate thinking
             }
         } catch (error) {
             this.removeTypingIndicator();
-            this.addMessageToChat('assistant', 'Connection error. Please try again.');
+            
+            // If we're offline or API fails, use demo mode
+            if (!this.isOnline) {
+                const demoResponse = this.generateDemoResponse(message);
+                this.addMessageToChat('assistant', demoResponse);
+            } else {
+                this.addMessageToChat('assistant', 'Connection error. Please try again.');
+            }
             console.error('Send message error:', error);
         }
 
         sendBtn.disabled = false;
         sendBtn.textContent = 'Send';
+    }
+
+    generateDemoResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // Greeting responses
+        if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+            return "Hello! Welcome to the TVRF Command Center. I'm the AI Commander, ready to assist you with your strategic operations. Currently running in Demo Mode - deploy to Railway for full functionality!";
+        }
+        
+        // Status queries
+        if (lowerMessage.includes('status') || lowerMessage.includes('how are you')) {
+            return "All systems are operational! Currently running in Demo Mode with full UI functionality. The AI Army is standing by with 5 active agents: System Analyst, Development Agent, Monitoring Agent, Strategy Agent, and Security Agent.";
+        }
+        
+        // Help requests
+        if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+            return "I can help you with strategic command operations, team coordination, and mission management. In Demo Mode, you can explore the full interface including: Chat, Projects, History, and the AI Army visualization with agent communication. Deploy to Railway for full AI capabilities!";
+        }
+        
+        // Army-related queries
+        if (lowerMessage.includes('army') || lowerMessage.includes('agent') || lowerMessage.includes('team')) {
+            return "The TVRF AI Army consists of 5 specialized agents working in perfect coordination. You can see them in the Army tab - each has different capabilities and expertise. Click 'Communicate' to interact directly with any agent!";
+        }
+        
+        // Mission queries
+        if (lowerMessage.includes('mission') || lowerMessage.includes('task')) {
+            return "Mission control is fully operational! You can create new missions, monitor active operations, and coordinate between agents. The system shows real-time progress and agent consensus levels.";
+        }
+        
+        // Demo mode queries
+        if (lowerMessage.includes('demo') || lowerMessage.includes('offline') || lowerMessage.includes('mock')) {
+            return "Yes, this is Demo Mode! All the UI features are working perfectly - you can explore the full interface, view agent status, create projects, and see the analytics dashboard. Deploy to Railway for full API functionality with your own AI keys!";
+        }
+        
+        // Deploy/Railway queries
+        if (lowerMessage.includes('deploy') || lowerMessage.includes('railway') || lowerMessage.includes('production')) {
+            return "Ready for Railway deployment! All configuration files are set up in the GitHub repository. Just add your API keys in Railway's environment variables and deploy. The Express server will handle all the backend functionality.";
+        }
+        
+        // Default responses
+        const defaultResponses = [
+            "Acknowledged, Commander. I'm processing your request through the TVRF Command Center. This is Demo Mode - all features are functional for testing!",
+            "Roger that! Your command has been received and processed. Currently operating in Demo Mode with full interface access.",
+            "Command processed successfully. All TVRF systems are operational. Ready for your next directive!",
+            "Understood, Commander. The AI Army is standing by for your strategic decisions. Demo Mode is active with all features enabled.",
+            "Message received and logged. This is TVRF Command Center Demo Mode - perfect for exploring all capabilities before Railway deployment!"
+        ];
+        
+        return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
     }
 
     addMessageToChat(role, content) {
@@ -244,19 +311,37 @@ class DashboardApp {
         if (!this.sessionId) return;
 
         try {
-            const response = await fetch(`/api/chat/history/${this.sessionId}`);
-            const data = await response.json();
+            if (this.isOnline) {
+                // Live mode - load from API
+                const response = await fetch(`/api/chat/history/${this.sessionId}`);
+                const data = await response.json();
 
-            if (data.success && data.data) {
-                document.getElementById('chatMessages').innerHTML = '';
-                data.data.forEach(conv => {
-                    this.addMessageToChat('user', conv.message);
-                    this.addMessageToChat('assistant', conv.response);
-                });
+                if (data.success && data.data) {
+                    document.getElementById('chatMessages').innerHTML = '';
+                    data.data.forEach(conv => {
+                        this.addMessageToChat('user', conv.message);
+                        this.addMessageToChat('assistant', conv.response);
+                    });
+                }
+            } else {
+                // Demo mode - load from localStorage or show welcome message
+                this.loadDemoConversation();
             }
         } catch (error) {
             console.error('Load history error:', error);
+            // Fallback to demo mode
+            this.loadDemoConversation();
         }
+    }
+
+    loadDemoConversation() {
+        // Show a welcome message in demo mode
+        document.getElementById('chatMessages').innerHTML = `
+            <div class="message assistant">
+                <div class="message-label">AI Commander</div>
+                <div class="message-content">Welcome to TVRF Command Center Demo! I'm the AI Commander, and all systems are operational. You can chat with me, explore the Projects, History, and Army sections. Deploy to Railway for full AI capabilities!</div>
+            </div>
+        `;
     }
 
     // Project Functions
