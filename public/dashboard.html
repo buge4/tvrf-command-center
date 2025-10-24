@@ -27,6 +27,12 @@
                     </svg>
                     <span>Projects</span>
                 </button>
+                <button class="nav-item" data-view="army">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span>Army</span>
+                </button>
                 <button class="nav-item" data-view="history">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -91,6 +97,75 @@
                 </div>
 
                 <div id="historyList" class="history-list"></div>
+            </div>
+
+            <div id="armyView" class="view">
+                <div class="view-header">
+                    <h1>AI Army Command</h1>
+                    <div class="army-actions">
+                        <button id="createTeamSessionBtn" class="btn-primary">New Mission</button>
+                        <button id="emergencyProtocolBtn" class="btn-warning">Emergency</button>
+                    </div>
+                </div>
+
+                <div class="army-dashboard">
+                    <!-- Agent Status Grid -->
+                    <div class="agents-section">
+                        <h2>Agent Army Status</h2>
+                        <div id="agentsGrid" class="agents-grid">
+                            <!-- Agents will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Active Missions -->
+                    <div class="missions-section">
+                        <h2>Active Missions</h2>
+                        <div id="activeMissions" class="missions-list">
+                            <!-- Active team sessions will be shown here -->
+                        </div>
+                    </div>
+
+                    <!-- Team Analytics -->
+                    <div class="analytics-section">
+                        <h2>Army Analytics</h2>
+                        <div id="teamAnalytics" class="analytics-grid">
+                            <!-- Analytics will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Mission Modal -->
+                <div id="newMissionModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Launch New Mission</h2>
+                        <input type="text" id="missionName" placeholder="Mission Name" class="input">
+                        <select id="missionType" class="input">
+                            <option value="development">Development</option>
+                            <option value="analysis">Analysis</option>
+                            <option value="monitoring">Monitoring</option>
+                            <option value="strategy">Strategy</option>
+                            <option value="security">Security</option>
+                        </select>
+                        <textarea id="missionBrief" placeholder="Mission Brief" rows="4" class="input"></textarea>
+                        <div class="modal-actions">
+                            <button id="cancelMissionBtn" class="btn-secondary">Cancel</button>
+                            <button id="launchMissionBtn" class="btn-primary">Launch Mission</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Communication Modal -->
+                <div id="agentCommModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Agent Communication</h2>
+                        <div id="agentCommContent">
+                            <!-- Dynamic content based on selected agents -->
+                        </div>
+                        <div class="modal-actions">
+                            <button id="closeAgentCommBtn" class="btn-secondary">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

@@ -43,6 +43,13 @@ class DashboardApp {
 
         // History
         document.getElementById('refreshHistoryBtn').addEventListener('click', () => this.loadHistory());
+
+        // Army Functions
+        document.getElementById('createTeamSessionBtn').addEventListener('click', () => this.showNewMissionModal());
+        document.getElementById('cancelMissionBtn').addEventListener('click', () => this.hideNewMissionModal());
+        document.getElementById('launchMissionBtn').addEventListener('click', () => this.launchMission());
+        document.getElementById('emergencyProtocolBtn').addEventListener('click', () => this.triggerEmergencyProtocol());
+        document.getElementById('closeAgentCommBtn').addEventListener('click', () => this.hideAgentCommModal());
     }
 
     switchView(view) {
@@ -63,6 +70,8 @@ class DashboardApp {
             this.loadProjects();
         } else if (view === 'history') {
             this.loadHistory();
+        } else if (view === 'army') {
+            this.loadArmyData();
         }
     }
 
@@ -352,6 +361,362 @@ class DashboardApp {
             console.error('Load history error:', error);
             container.innerHTML = '<div class="loading">Connection error</div>';
         }
+    }
+
+    // Army Functions
+    async loadArmyData() {
+        this.loadAgentStatus();
+        this.loadActiveMissions();
+        this.loadTeamAnalytics();
+    }
+
+    async loadAgentStatus() {
+        const container = document.getElementById('agentsGrid');
+        
+        // Define the AI agents
+        const agents = [
+            {
+                name: 'System Analyst',
+                type: 'SYSTEM_ANALYST',
+                role: 'Data Analysis & Insights',
+                weight: '25%',
+                status: 'active',
+                missions: Math.floor(Math.random() * 10) + 5,
+                consensus: Math.floor(Math.random() * 30) + 70
+            },
+            {
+                name: 'Development Agent',
+                type: 'DEVELOPMENT',
+                role: 'Code & Implementation',
+                weight: '25%',
+                status: 'active',
+                missions: Math.floor(Math.random() * 15) + 8,
+                consensus: Math.floor(Math.random() * 25) + 75
+            },
+            {
+                name: 'Monitoring Agent',
+                type: 'MONITORING',
+                role: 'System Health & Alerts',
+                weight: '20%',
+                status: 'idle',
+                missions: Math.floor(Math.random() * 8) + 3,
+                consensus: Math.floor(Math.random() * 20) + 80
+            },
+            {
+                name: 'Strategy Agent',
+                type: 'STRATEGY',
+                role: 'Strategic Planning',
+                weight: '20%',
+                status: 'active',
+                missions: Math.floor(Math.random() * 12) + 6,
+                consensus: Math.floor(Math.random() * 35) + 65
+            },
+            {
+                name: 'Security Agent',
+                type: 'SECURITY',
+                role: 'Security Assessment',
+                weight: '10%',
+                status: 'active',
+                missions: Math.floor(Math.random() * 6) + 2,
+                consensus: Math.floor(Math.random() * 15) + 85
+            }
+        ];
+
+        container.innerHTML = agents.map(agent => `
+            <div class="agent-card ${agent.status}" data-agent="${agent.type}">
+                <div class="agent-header">
+                    <div class="agent-name">${agent.name}</div>
+                    <div class="agent-status ${agent.status}">${agent.status}</div>
+                </div>
+                <div class="agent-role">${agent.role}</div>
+                
+                <div class="agent-stats">
+                    <div class="agent-stat">
+                        <div class="agent-stat-value">${agent.missions}</div>
+                        <div class="agent-stat-label">Missions</div>
+                    </div>
+                    <div class="agent-stat">
+                        <div class="agent-stat-value">${agent.consensus}%</div>
+                        <div class="agent-stat-label">Consensus</div>
+                    </div>
+                </div>
+                
+                <div class="agent-weight">
+                    <div class="agent-weight-label">Influence Weight</div>
+                    <div class="agent-weight-bar">
+                        <div class="agent-weight-fill" style="width: ${agent.weight}"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.75rem; color: #718096; margin-top: 0.25rem;">${agent.weight}</div>
+                </div>
+                
+                <div class="agent-actions">
+                    <button class="btn-communicate" onclick="dashboardApp.communicateWithAgent('${agent.type}', '${agent.name}')">
+                        Communicate
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async loadActiveMissions() {
+        const container = document.getElementById('activeMissions');
+        container.innerHTML = '<div class="loading">Loading missions...</div>';
+
+        try {
+            // For demo purposes, show sample missions
+            const sampleMissions = [
+                {
+                    name: 'Database Optimization',
+                    type: 'Development',
+                    participants: ['Development Agent', 'System Analyst'],
+                    status: 'active',
+                    progress: 65
+                },
+                {
+                    name: 'Security Audit',
+                    type: 'Security',
+                    participants: ['Security Agent', 'Monitoring Agent'],
+                    status: 'active',
+                    progress: 30
+                },
+                {
+                    name: 'Performance Analysis',
+                    type: 'Analysis',
+                    participants: ['System Analyst', 'Strategy Agent'],
+                    status: 'active',
+                    progress: 90
+                }
+            ];
+
+            container.innerHTML = sampleMissions.map(mission => `
+                <div class="mission-card">
+                    <div class="mission-header">
+                        <div class="mission-name">${mission.name}</div>
+                        <div class="mission-type">${mission.type}</div>
+                    </div>
+                    <div class="mission-participants">
+                        <strong>Agents:</strong> ${mission.participants.join(', ')}
+                    </div>
+                    <div class="mission-status">
+                        <div style="flex: 1; background: #e2e8f0; height: 8px; border-radius: 4px; margin-right: 1rem;">
+                            <div style="width: ${mission.progress}%; height: 100%; background: #48bb78; border-radius: 4px; transition: width 0.3s;"></div>
+                        </div>
+                        <span style="font-size: 0.875rem; color: #718096;">${mission.progress}%</span>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Load missions error:', error);
+            container.innerHTML = '<div class="loading">Error loading missions</div>';
+        }
+    }
+
+    async loadTeamAnalytics() {
+        const container = document.getElementById('teamAnalytics');
+        
+        try {
+            // Sample analytics data
+            const analytics = [
+                { value: '12', label: 'Active Missions' },
+                { value: '87%', label: 'Consensus Rate' },
+                { value: '2.3s', label: 'Avg Response' },
+                { value: '5', label: 'Online Agents' }
+            ];
+
+            container.innerHTML = analytics.map(stat => `
+                <div class="analytics-card">
+                    <div class="analytics-value">${stat.value}</div>
+                    <div class="analytics-label">${stat.label}</div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Load analytics error:', error);
+            container.innerHTML = '<div class="loading">Error loading analytics</div>';
+        }
+    }
+
+    showNewMissionModal() {
+        document.getElementById('newMissionModal').classList.add('active');
+    }
+
+    hideNewMissionModal() {
+        document.getElementById('newMissionModal').classList.remove('active');
+        document.getElementById('missionName').value = '';
+        document.getElementById('missionBrief').value = '';
+    }
+
+    async launchMission() {
+        const name = document.getElementById('missionName').value.trim();
+        const type = document.getElementById('missionType').value;
+        const brief = document.getElementById('missionBrief').value.trim();
+
+        if (!name) {
+            alert('Mission name is required');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/team/sessions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sessionName: name,
+                    sessionType: type,
+                    coordinatorAgent: 'AICommander'
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.hideNewMissionModal();
+                this.loadActiveMissions();
+                alert(`Mission "${name}" launched successfully!`);
+            } else {
+                alert('Error launching mission: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Launch mission error:', error);
+            alert('Connection error. Please try again.');
+        }
+    }
+
+    async triggerEmergencyProtocol() {
+        const confirmed = confirm('This will activate emergency protocol across all agents. Continue?');
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch('/api/team/emergency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    alertType: 'SYSTEM_ALERT',
+                    alertData: {
+                        severity: 'CRITICAL',
+                        message: 'Emergency protocol activated by commander',
+                        timestamp: new Date().toISOString()
+                    }
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Emergency protocol activated! All agents are now on high alert.');
+                this.loadAgentStatus();
+            } else {
+                alert('Error activating emergency protocol: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Emergency protocol error:', error);
+            alert('Connection error. Please try again.');
+        }
+    }
+
+    communicateWithAgent(agentType, agentName) {
+        const content = `
+            <div style="margin-bottom: 1rem;">
+                <h3>Direct Communication with ${agentName}</h3>
+                <p style="color: #718096;">Send a message directly to this agent</p>
+            </div>
+            <textarea id="agentMessage" placeholder="Enter your message to ${agentName}..." rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem;"></textarea>
+            <div style="display: flex; gap: 0.5rem;">
+                <button onclick="dashboardApp.sendAgentMessage('${agentType}')" class="btn-primary" style="flex: 1;">Send Message</button>
+                <button onclick="dashboardApp.requestAgentReport('${agentType}')" class="btn-secondary" style="flex: 1;">Request Status Report</button>
+            </div>
+            <div id="agentCommLog" style="margin-top: 1rem; max-height: 200px; overflow-y: auto;"></div>
+        `;
+        
+        document.getElementById('agentCommContent').innerHTML = content;
+        document.getElementById('agentCommModal').classList.add('active');
+    }
+
+    async sendAgentMessage(agentType) {
+        const message = document.getElementById('agentMessage').value.trim();
+        if (!message) return;
+
+        // Add message to log
+        const log = document.getElementById('agentCommLog');
+        log.innerHTML += `
+            <div class="agent-comm-item">
+                <div class="agent-comm-header">
+                    <div class="agent-comm-sender">You → ${agentType}</div>
+                    <div class="agent-comm-timestamp">${new Date().toLocaleTimeString()}</div>
+                </div>
+                <div class="agent-comm-message">${this.escapeHtml(message)}</div>
+            </div>
+        `;
+
+        // Clear input
+        document.getElementById('agentMessage').value = '';
+        
+        // Simulate agent response
+        setTimeout(() => {
+            const responses = [
+                "Message received and acknowledged. Standing by for further instructions.",
+                "Analyzing request. Will provide detailed response shortly.",
+                "Agent online and ready. Executing assigned tasks.",
+                "Status update: All systems operational. Ready for new directives.",
+                "Roger. Processing your command with highest priority."
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            log.innerHTML += `
+                <div class="agent-comm-item">
+                    <div class="agent-comm-header">
+                        <div class="agent-comm-sender">${agentType} → You</div>
+                        <div class="agent-comm-timestamp">${new Date().toLocaleTimeString()}</div>
+                    </div>
+                    <div class="agent-comm-message">${randomResponse}</div>
+                </div>
+            `;
+            log.scrollTop = log.scrollHeight;
+        }, 1000 + Math.random() * 2000);
+    }
+
+    async requestAgentReport(agentType) {
+        const log = document.getElementById('agentCommLog');
+        log.innerHTML += `
+            <div class="agent-comm-item">
+                <div class="agent-comm-header">
+                    <div class="agent-comm-sender">System</div>
+                    <div class="agent-comm-timestamp">${new Date().toLocaleTimeString()}</div>
+                </div>
+                <div class="agent-comm-message">Requesting status report from ${agentType}...</div>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const reports = {
+                'SYSTEM_ANALYST': "Current analysis: Processing 3 data streams. Performance metrics optimal. Resource utilization: 68%. Ready for next analytical task.",
+                'DEVELOPMENT': "Development status: 2 active projects, 1 pending review. Code quality: 94%. Testing completion: 87%. Deploy pipeline ready.",
+                'MONITORING': "System health: All parameters normal. 0 critical alerts. Response time: 234ms average. Monitoring 24/7 operations.",
+                'STRATEGY': "Strategic assessment: Market trends analyzed. 3 opportunities identified. Risk factors minimal. Strategic recommendations updated.",
+                'SECURITY': "Security status: All systems secure. Vulnerability scan completed. Threat level: Low. No anomalies detected. Security protocols active."
+            };
+            
+            const report = reports[agentType] || "Status report: All systems operational and ready.";
+            
+            log.innerHTML += `
+                <div class="agent-comm-item">
+                    <div class="agent-comm-header">
+                        <div class="agent-comm-sender">${agentType} → You</div>
+                        <div class="agent-comm-timestamp">${new Date().toLocaleTimeString()}</div>
+                    </div>
+                    <div class="agent-comm-message">${report}</div>
+                </div>
+            `;
+            log.scrollTop = log.scrollHeight;
+        }, 1500);
+    }
+
+    hideAgentCommModal() {
+        document.getElementById('agentCommModal').classList.remove('active');
     }
 
     // Utility
