@@ -126,7 +126,7 @@
 
         <a href="/dashboard" class="cta-button">Enter Command Center</a>
 
-        <div id="status" class="status">
+        <div id="status" class="status offline">
             <span id="statusText">Checking system status...</span>
         </div>
     </div>
@@ -140,18 +140,18 @@
                 const statusEl = document.getElementById('status');
                 const statusTextEl = document.getElementById('statusText');
                 
-                if (data.status === 'healthy') {
+                if (data.status === 'ok' || data.status === 'healthy') {
                     statusEl.className = 'status online';
-                    statusTextEl.textContent = `System Online - ${data.service}`;
+                    statusTextEl.textContent = `System Online - Ready for Deployment`;
                 } else {
                     statusEl.className = 'status offline';
-                    statusTextEl.textContent = 'System Offline';
+                    statusTextEl.textContent = 'Demo Mode - Railway Deployment Available';
                 }
             } catch (error) {
                 const statusEl = document.getElementById('status');
                 const statusTextEl = document.getElementById('statusText');
                 statusEl.className = 'status offline';
-                statusTextEl.textContent = 'Unable to connect to server';
+                statusTextEl.innerHTML = 'Demo Mode - <a href="https://railway.app" style="color: #fbbf24; text-decoration: underline;">Deploy to Railway</a> for full functionality';
             }
         }
 

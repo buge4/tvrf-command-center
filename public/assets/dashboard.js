@@ -5,6 +5,7 @@ class DashboardApp {
         this.currentView = 'chat';
         this.sessionId = null;
         this.projects = [];
+        this.isOnline = false; // Assume offline initially
         
         this.init();
     }
@@ -83,18 +84,25 @@ class DashboardApp {
             const statusEl = document.getElementById('systemStatus');
             const statusDot = document.querySelector('.status-dot');
             
-            if (data.status === 'healthy') {
+            if (data.status === 'ok' || data.status === 'healthy') {
                 statusEl.textContent = 'Connected';
                 statusDot.style.background = '#10b981';
+                this.isOnline = true;
+                this.loadArmyData(); // Load live data
             } else {
-                statusEl.textContent = 'Disconnected';
-                statusDot.style.background = '#ef4444';
+                throw new Error('Server responded with unhealthy status');
             }
         } catch (error) {
             const statusEl = document.getElementById('systemStatus');
             const statusDot = document.querySelector('.status-dot');
-            statusEl.textContent = 'Offline';
-            statusDot.style.background = '#ef4444';
+            
+            // Use mock data in offline mode
+            this.isOnline = false;
+            statusEl.textContent = 'Demo Mode';
+            statusDot.style.background = '#f59e0b';
+            
+            // Load mock Army data for demonstration
+            this.loadMockArmyData();
         }
     }
 
@@ -365,9 +373,101 @@ class DashboardApp {
 
     // Army Functions
     async loadArmyData() {
-        this.loadAgentStatus();
-        this.loadActiveMissions();
-        this.loadTeamAnalytics();
+        if (this.isOnline) {
+            this.loadAgentStatus();
+            this.loadActiveMissions();
+            this.loadTeamAnalytics();
+        } else {
+            this.loadMockArmyData();
+        }
+    }
+
+    loadMockArmyData() {
+        // Mock Army data for demo/offline mode
+        this.agents = [
+            {
+                id: 'system-analyst',
+                name: 'System Analyst',
+                type: 'SystemAnalyst',
+                status: 'online',
+                confidence: 92,
+                active: true,
+                tasksCompleted: 47,
+                lastActivity: new Date().toISOString(),
+                workload: 75
+            },
+            {
+                id: 'development',
+                name: 'Development Agent',
+                type: 'Development',
+                status: 'online',
+                confidence: 88,
+                active: true,
+                tasksCompleted: 32,
+                lastActivity: new Date().toISOString(),
+                workload: 60
+            },
+            {
+                id: 'monitoring',
+                name: 'Monitoring Agent',
+                type: 'Monitoring',
+                status: 'online',
+                confidence: 95,
+                active: true,
+                tasksCompleted: 89,
+                lastActivity: new Date().toISOString(),
+                workload: 45
+            },
+            {
+                id: 'strategy',
+                name: 'Strategy Agent',
+                type: 'Strategy',
+                status: 'online',
+                confidence: 90,
+                active: true,
+                tasksCompleted: 28,
+                lastActivity: new Date().toISOString(),
+                workload: 55
+            },
+            {
+                id: 'security',
+                name: 'Security Agent',
+                type: 'Security',
+                status: 'online',
+                confidence: 98,
+                active: true,
+                tasksCompleted: 67,
+                lastActivity: new Date().toISOString(),
+                workload: 30
+            }
+        ];
+
+        this.displayAgents();
+        this.updateMockAnalytics();
+    }
+
+    updateMockAnalytics() {
+        const analyticsContainer = document.getElementById('teamAnalytics');
+        if (analyticsContainer) {
+            analyticsContainer.innerHTML = `
+                <div class="analytics-item">
+                    <div class="analytics-label">Total Agents</div>
+                    <div class="analytics-value">5</div>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-label">Active Missions</div>
+                    <div class="analytics-value">2</div>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-label">Success Rate</div>
+                    <div class="analytics-value">94%</div>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-label">Avg Response</div>
+                    <div class="analytics-value">0.8s</div>
+                </div>
+            `;
+        }
     }
 
     async loadAgentStatus() {
